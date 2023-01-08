@@ -53,9 +53,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplyDefaultsExt.cs" />
+    <Compile Include="Bill\BillAddedFields.cs" />
+    <Compile Include="Bill\BillStack_AddBill_Patch.cs" />
+    <Compile Include="Bill\Bill_DoInterface_Patch.cs" />
+    <Compile Include="Bill\Bill_Expose_Patch.cs" />
+    <Compile Include="Building_WorkTable_Expose_Patch.cs" />
     <Compile Include="Defaultie.cs" />
     <Compile Include="DefaultieSettings.cs" />
+    <Compile Include="DefaultieWindow.cs" />
+    <Compile Include="Tab_Bill\ITab_Bills_Ctor_Patch.cs" />
+    <Compile Include="Tab_Bill\ITab_Bills_FillTab_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WeakTables.cs" />
+    <Compile Include="WorkTable\WorkTableDefaults.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
