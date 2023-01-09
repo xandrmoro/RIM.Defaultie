@@ -1,4 +1,6 @@
 ﻿using RimWorld;
+using System;
+using System.Linq.Expressions;
 using Verse;
 
 namespace Defaultie
@@ -12,6 +14,35 @@ namespace Defaultie
         public int RepeatCount = Defaultie.Settings.DefaultRepeatCount;
         public string CountBuffer = "";
 
+        public Pawn PawnRestriction;
+        public bool SlavesOnly;
+        public bool MechsOnly;
+        public bool NonMechsOnly;
+
+        public void ZeroAll()
+        {
+            SlavesOnly = false;
+            MechsOnly = false;
+            NonMechsOnly = false;
+            PawnRestriction = null;
+        }
+
+        public void SetPawnCatRestriction(ref bool field)
+        {
+            ZeroAll();
+
+            field = true;
+        }
+
+        public void SetPawnRestriction(Pawn pawn)
+        {
+            ZeroAll();
+
+            PawnRestriction = pawn;
+        }
+
+        public string GetRestrictionLabel() => (PawnRestriction != null) ? PawnRestriction.LabelShortCap : ((ModsConfig.IdeologyActive && SlavesOnly) ? ((string)"AnySlave".Translate()) : ((ModsConfig.BiotechActive && MechsOnly) ? ((string)"AnyMech".Translate()) : ((!ModsConfig.BiotechActive || !NonMechsOnly) ? ((string)"AnyWorker".Translate()) : ((string)"AnyNonMech".Translate()))));
+
         public void ExposeData()
         {
             Scribe_Values.Look(ref SkillRange, "skillRange", Defaultie.Settings.DefaultSkillRange);
@@ -19,6 +50,13 @@ namespace Defaultie
             Scribe_Values.Look(ref RepeatCount, "repeatCount", Defaultie.Settings.DefaultRepeatCount);
             Scribe_Defs.Look(ref StoreMode, "storeMode");
             Scribe_Defs.Look(ref RepeatMode, "repeatMode");
+
+            Scribe_Values.Look(ref SlavesOnly, "slavesOnly", false);
+            Scribe_Values.Look(ref MechsOnly, "mechsOnly", false);
+            Scribe_Values.Look(ref NonMechsOnly, "nonMechsOnly", false);
+
+            Scribe_References.Look(ref PawnRestriction, "pawnRestriction");
+            Log.Message(PawnRestriction?.Name.ToStringShort ?? $"No restriction");
 
             if (StoreMode == null)
             {
@@ -38,6 +76,11 @@ namespace Defaultie
             StoreMode = other.StoreMode ?? BillStoreModeDefOf.BestStockpile;
             RepeatMode = other.RepeatMode ?? BillRepeatModeDefOf.RepeatCount;
             RepeatCount = other.RepeatCount;
-        }
+
+            PawnRestriction = other.PawnRestriction;
+            SlavesOnly = other.SlavesOnly;
+            MechsOnly = other.MechsOnly;
+            NonMechsOnly = other.NonMechsOnly;
+    }
     }
 }

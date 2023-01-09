@@ -11,6 +11,26 @@ namespace Defaultie
             bill.SetStoreMode(defaults.StoreMode);
             bill.repeatMode = defaults.RepeatMode;
 
+            if (defaults.PawnRestriction != null)
+            {
+                bill.SetPawnRestriction(defaults.PawnRestriction);
+            }
+
+            if (defaults.SlavesOnly)
+            {
+                bill.SetAnySlaveRestriction();
+            }
+
+            if (defaults.MechsOnly)
+            {
+                bill.SetAnyMechRestriction();
+            }
+
+            if (defaults.NonMechsOnly)
+            {
+                bill.SetAnyNonMechRestriction();
+            }
+
             if (bill.repeatMode == BillRepeatModeDefOf.RepeatCount && newBill)
             {
                 bill.repeatCount = defaults.RepeatCount;

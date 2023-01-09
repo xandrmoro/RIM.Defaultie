@@ -7,6 +7,7 @@ using System.Reflection;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
+using static Verse.Widgets;
 
 namespace Defaultie
 {
@@ -20,6 +21,60 @@ namespace Defaultie
 
         private static Lazy<Texture2D> icon = new Lazy<Texture2D>(() => ContentFinder<Texture2D>.Get("UI/Icons/Options/OptionsGeneral"));
         public static Texture2D Icon => icon.Value;
+
+        private static IEnumerable<Widgets.DropdownMenuElement<Pawn>> GeneratePawnRestrictionOptions(WorkTableDefaults defaults)
+        {
+            yield return new Widgets.DropdownMenuElement<Pawn>
+            {
+                option = new FloatMenuOption("AnyWorker".Translate(), delegate
+                {
+                    defaults.ZeroAll();
+                }),
+                payload = null
+            };
+            if (ModsConfig.IdeologyActive)
+            {
+                yield return new Widgets.DropdownMenuElement<Pawn>
+                {
+                    option = new FloatMenuOption("AnySlave".Translate(), delegate
+                    {
+                        defaults.SetPawnCatRestriction(ref defaults.SlavesOnly);
+                    }),
+                    payload = null
+                };
+            }
+            if (ModsConfig.BiotechActive)
+            {
+                yield return new Widgets.DropdownMenuElement<Pawn>
+                {
+                    option = new FloatMenuOption("AnyMech".Translate(), delegate
+                    {
+                        defaults.SetPawnCatRestriction(ref defaults.MechsOnly);
+                    }),
+                    payload = null
+                };
+                yield return new Widgets.DropdownMenuElement<Pawn>
+                {
+                    option = new FloatMenuOption("AnyNonMech".Translate(), delegate
+                    {
+                        defaults.SetPawnCatRestriction(ref defaults.NonMechsOnly);
+                    }),
+                    payload = null
+                };
+            }
+            foreach (var pawn in PawnsFinder.AllMaps_FreeColonists.OrderBy(c => c.LabelShortCap))
+            {
+                yield return new Widgets.DropdownMenuElement<Pawn>
+                {
+                    option = new FloatMenuOption($"{pawn.LabelShortCap}", delegate
+                    {
+                        defaults.SetPawnRestriction(pawn);
+                    }),
+                    payload = pawn
+                };
+            }
+        }
+
 
         static void Postfix(ITab_Bills __instance, float ___PasteX, float ___PasteY, float ___PasteSize, Vector2 ___WinSize)
         {
@@ -46,6 +101,10 @@ namespace Defaultie
                         listing.IntRange(ref defaults.SkillRange, 0, 20);
 
                         listing.Gap();
+                        
+                        Widgets.Dropdown(buttonLabel: defaults.GetRestrictionLabel(), rect: listing.GetRect(30f), target: defaults, getPayload: (WorkTableDefaults b) => b.PawnRestriction, menuGenerator: (WorkTableDefaults b) => GeneratePawnRestrictionOptions(defaults));
+
+                        listing.Gap();
 
                         string text = "IngredientSearchRadius".Translate();
                         string text2 = ((defaults.Range == 999f) ? "Unlimited".TranslateSimple() : defaults.Range.ToString("F0"));
@@ -57,8 +116,6 @@ namespace Defaultie
                         }
 
                         listing.Gap();
-
-                        Log.Message(defaults.StoreMode.defName);
 
                         if (listing.RadioButton("On floor", defaults.StoreMode == BillStoreModeDefOf.DropOnFloor))
                         {
