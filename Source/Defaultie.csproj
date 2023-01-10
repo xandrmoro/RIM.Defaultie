@@ -56,7 +56,6 @@
     <Compile Include="ApplyDefaultsExt.cs" />
     <Compile Include="Bill\BillAddedFields.cs" />
     <Compile Include="Bill\BullUtility_MakeNewBill.cs" />
-    <Compile Include="Bill\BillStack_AddBill_Patch.cs" />
     <Compile Include="Bill\Bill_DoInterface_Patch.cs" />
     <Compile Include="Bill\Bill_Expose_Patch.cs" />
     <Compile Include="Building_WorkTable_Expose_Patch.cs" />
