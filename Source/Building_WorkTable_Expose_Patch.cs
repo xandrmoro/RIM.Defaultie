@@ -11,9 +11,9 @@ namespace Defaultie
         {
             var defaults = __instance.GetDefaults();
             Scribe_Deep.Look(ref defaults, "defaultSettings");
-            if (Scribe.mode == LoadSaveMode.LoadingVars && defaults != null)
-            {
-                __instance.GetDefaults().SetFrom(defaults);
+            
+            if (Scribe.mode == LoadSaveMode.LoadingVars) {
+                __instance.Relink(defaults);
             }
         }
     }

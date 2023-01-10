@@ -11,24 +11,25 @@ namespace Defaultie
             bill.SetStoreMode(defaults.StoreMode);
             bill.repeatMode = defaults.RepeatMode;
 
+            bill.pauseWhenSatisfied = defaults.PauseOnComplete;
+            bill.unpauseWhenYouHave = defaults.UnpauseCount;
+
             if (defaults.PawnRestriction != null)
             {
                 bill.SetPawnRestriction(defaults.PawnRestriction);
             }
-
-            if (defaults.SlavesOnly)
+            else if (defaults.SlavesOnly)
             {
                 bill.SetAnySlaveRestriction();
-            }
-
-            if (defaults.MechsOnly)
+            } else if (defaults.MechsOnly)
             {
                 bill.SetAnyMechRestriction();
-            }
-
-            if (defaults.NonMechsOnly)
+            } else if (defaults.NonMechsOnly)
             {
                 bill.SetAnyNonMechRestriction();
+            } else
+            {
+                bill.SetAnyPawnRestriction();
             }
 
             if (bill.repeatMode == BillRepeatModeDefOf.RepeatCount && newBill)

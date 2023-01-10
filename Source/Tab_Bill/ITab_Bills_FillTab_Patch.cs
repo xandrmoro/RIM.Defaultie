@@ -96,13 +96,16 @@ namespace Defaultie
 
                     listing.Begin(inRect);
                     {
-                        IntRange skillRange = new IntRange(0, 20);
-                        listing.Label("Skill level");
-                        listing.IntRange(ref defaults.SkillRange, 0, 20);
+                        Widgets.Dropdown(buttonLabel: defaults.GetRestrictionLabel(), rect: listing.GetRect(30f), target: defaults, getPayload: (WorkTableDefaults b) => b.PawnRestriction, menuGenerator: (WorkTableDefaults b) => GeneratePawnRestrictionOptions(b));
 
-                        listing.Gap();
-                        
-                        Widgets.Dropdown(buttonLabel: defaults.GetRestrictionLabel(), rect: listing.GetRect(30f), target: defaults, getPayload: (WorkTableDefaults b) => b.PawnRestriction, menuGenerator: (WorkTableDefaults b) => GeneratePawnRestrictionOptions(defaults));
+                        if (defaults.PawnRestriction == null)
+                        {
+                            listing.Gap();
+
+                            IntRange skillRange = new IntRange(0, 20);
+                            listing.Label("Skill level");
+                            listing.IntRange(ref defaults.SkillRange, 0, 20);
+                        }
 
                         listing.Gap();
 
@@ -148,9 +151,31 @@ namespace Defaultie
                             };
                             Find.WindowStack.Add(new FloatMenu(list));
                         }
-                        
-                        defaults.CountBuffer = defaults.RepeatCount.ToString();
-                        listing.IntEntry(ref defaults.RepeatCount, ref defaults.CountBuffer);
+
+                        if (defaults.RepeatMode != BillRepeatModeDefOf.Forever)
+                        {
+                            listing.Gap();
+
+                            defaults.CountBuffer = defaults.RepeatCount.ToString();
+                            listing.IntEntry(ref defaults.RepeatCount, ref defaults.CountBuffer);
+                        }
+
+                        if (defaults.RepeatMode == BillRepeatModeDefOf.TargetCount)
+                        {
+                            listing.Gap();
+
+                            listing.CheckboxLabeled("PauseWhenSatisfied".Translate(), ref defaults.PauseOnComplete);
+                            if (defaults.PauseOnComplete)
+                            {
+                                listing.Label("UnpauseWhenYouHave".Translate() + ": " + defaults.UnpauseCount.ToString("F0"));
+                                listing.IntEntry(ref defaults.UnpauseCount, ref defaults.UnpauseBuffer);
+                                if (defaults.UnpauseCount >= defaults.RepeatCount)
+                                {
+                                    defaults.UnpauseCount = defaults.RepeatCount - 1;
+                                    defaults.UnpauseBuffer = defaults.UnpauseCount.ToStringCached();
+                                }
+                            }
+                        }
                     }
                     listing.End();
 

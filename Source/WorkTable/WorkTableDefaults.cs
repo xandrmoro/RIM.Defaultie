@@ -12,7 +12,12 @@ namespace Defaultie
         public BillStoreModeDef StoreMode = BillStoreModeDefOf.BestStockpile;
         public BillRepeatModeDef RepeatMode = BillRepeatModeDefOf.RepeatCount;
         public int RepeatCount = Defaultie.Settings.DefaultRepeatCount;
+
+        public bool PauseOnComplete = false;
+        public int UnpauseCount = 0;
+        
         public string CountBuffer = "";
+        public string UnpauseBuffer = "";
 
         public Pawn PawnRestriction;
         public bool SlavesOnly;
@@ -51,12 +56,14 @@ namespace Defaultie
             Scribe_Defs.Look(ref StoreMode, "storeMode");
             Scribe_Defs.Look(ref RepeatMode, "repeatMode");
 
+            Scribe_Values.Look(ref PauseOnComplete, "pauseOnComplete", false);
+            Scribe_Values.Look(ref UnpauseCount, "unpauseCount", 0);
+
             Scribe_Values.Look(ref SlavesOnly, "slavesOnly", false);
             Scribe_Values.Look(ref MechsOnly, "mechsOnly", false);
             Scribe_Values.Look(ref NonMechsOnly, "nonMechsOnly", false);
 
             Scribe_References.Look(ref PawnRestriction, "pawnRestriction");
-            Log.Message(PawnRestriction?.Name.ToStringShort ?? $"No restriction");
 
             if (StoreMode == null)
             {
@@ -69,18 +76,19 @@ namespace Defaultie
             }
         }
 
-        public void SetFrom(WorkTableDefaults other)
-        {
-            SkillRange = other.SkillRange;
-            Range = other.Range;
-            StoreMode = other.StoreMode ?? BillStoreModeDefOf.BestStockpile;
-            RepeatMode = other.RepeatMode ?? BillRepeatModeDefOf.RepeatCount;
-            RepeatCount = other.RepeatCount;
+        //public void SetFrom(WorkTableDefaults other)
+        //{
+        //    SkillRange = other.SkillRange;
+        //    Range = other.Range;
+        //    StoreMode = other.StoreMode ?? BillStoreModeDefOf.BestStockpile;
+        //    RepeatMode = other.RepeatMode ?? BillRepeatModeDefOf.RepeatCount;
+        //    RepeatCount = other.RepeatCount;
 
-            PawnRestriction = other.PawnRestriction;
-            SlavesOnly = other.SlavesOnly;
-            MechsOnly = other.MechsOnly;
-            NonMechsOnly = other.NonMechsOnly;
-    }
+        //    Log.Message($"Pawn restriction set to {other.PawnRestriction?.LabelShortCap}");
+        //    PawnRestriction = other.PawnRestriction;
+        //    SlavesOnly = other.SlavesOnly;
+        //    MechsOnly = other.MechsOnly;
+        //    NonMechsOnly = other.NonMechsOnly;
+        //}
     }
 }
