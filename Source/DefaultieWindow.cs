@@ -13,6 +13,8 @@ namespace Defaultie
         private readonly Action<Rect> drawContent;
         private readonly Action onUpdate;
         private readonly Rect initialRect;
+        
+        public Vector2 ScrollPosition;
 
         public DefaultieWindow(Rect initialRect, Action<Rect> drawContent, Action onUpdate)
         {

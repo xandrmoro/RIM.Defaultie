@@ -9,7 +9,6 @@ namespace Defaultie
             bill.allowedSkillRange = defaults.SkillRange;
             bill.ingredientSearchRadius = defaults.Range;
             bill.SetStoreMode(defaults.StoreMode);
-            bill.repeatMode = defaults.RepeatMode;
 
             bill.pauseWhenSatisfied = defaults.PauseOnComplete;
             bill.unpauseWhenYouHave = defaults.UnpauseCount;
@@ -32,6 +31,22 @@ namespace Defaultie
                 bill.SetAnyPawnRestriction();
             }
 
+            if (!bill.recipe.WorkerCounter.CanCountProducts(bill))
+            {
+                if (defaults.ForeverIfUncountable)
+                {
+                    bill.repeatMode = BillRepeatModeDefOf.Forever;
+                }
+                else
+                {
+                    bill.repeatMode = BillRepeatModeDefOf.RepeatCount;
+                }
+            }
+            else
+            {
+                bill.repeatMode = defaults.RepeatMode;
+            }
+
             if (bill.repeatMode == BillRepeatModeDefOf.RepeatCount && newBill)
             {
                 bill.repeatCount = defaults.RepeatCount;
@@ -40,6 +55,9 @@ namespace Defaultie
             if (bill.repeatMode == BillRepeatModeDefOf.TargetCount)
             {
                 bill.targetCount = defaults.RepeatCount;
+                bill.qualityRange = defaults.QualityRange;
+                bill.hpRange = defaults.HpRange;
+                bill.limitToAllowedStuff = defaults.LimitToAllowedStuff;
             }
         }
     }

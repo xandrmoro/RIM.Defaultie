@@ -75,7 +75,6 @@ namespace Defaultie
             }
         }
 
-
         static void Postfix(ITab_Bills __instance, float ___PasteX, float ___PasteY, float ___PasteSize, Vector2 ___WinSize)
         {
             var iconRect = new Rect(___WinSize.x - ___PasteX + ___PasteSize, ___PasteY, ___PasteSize, ___PasteSize);
@@ -85,16 +84,20 @@ namespace Defaultie
                 var tabRect = Traverse.Create(__instance).Property<Rect>("TabRect").Value;
 
                 var windowRect = new Rect(tabRect.x + tabRect.width, tabRect.y, 250f, tabRect.height);
-                var innerRect = windowRect.ContractedBy(10f).AtZero();
+                var scrollRect = windowRect.ContractedBy(10f).AtZero();
+                var innerRect = scrollRect.LeftPartPixels(scrollRect.width - 16f);
+                innerRect.height += 100f;
 
                 Find.WindowStack.Add(new DefaultieWindow(windowRect, (inRect) =>
                 {
                     var selTable = Traverse.Create(__instance).Property<Building_WorkTable>("SelTable").Value;
                     var defaults = selTable.GetDefaults();
 
+                    Widgets.BeginScrollView(scrollRect, ref Find.WindowStack.WindowOfType<DefaultieWindow>().ScrollPosition, innerRect);
+
                     var listing = new Listing_Standard();
 
-                    listing.Begin(inRect);
+                    listing.Begin(innerRect);
                     {
                         Widgets.Dropdown(buttonLabel: defaults.GetRestrictionLabel(), rect: listing.GetRect(30f), target: defaults, getPayload: (WorkTableDefaults b) => b.PawnRestriction, menuGenerator: (WorkTableDefaults b) => GeneratePawnRestrictionOptions(b));
 
@@ -164,6 +167,16 @@ namespace Defaultie
                         {
                             listing.Gap();
 
+                            Widgets.FloatRange(listing.GetRect(28f), 5502020, ref defaults.HpRange, 0f, 1f, "HitPoints", ToStringStyle.PercentZero);
+                            //defaults.HpRange.min = Mathf.Round(defaults.HpRange.min * 100f) / 100f;
+                            //defaults.HpRange.max = Mathf.Round(defaults.HpRange.max * 100f) / 100f;
+
+                            Widgets.QualityRange(listing.GetRect(28f), 5502021, ref defaults.QualityRange);
+
+                            listing.Gap();
+
+                            listing.CheckboxLabeled("LimitToAllowedStuff".Translate(), ref defaults.LimitToAllowedStuff);
+
                             listing.CheckboxLabeled("PauseWhenSatisfied".Translate(), ref defaults.PauseOnComplete);
                             if (defaults.PauseOnComplete)
                             {
@@ -175,9 +188,15 @@ namespace Defaultie
                                     defaults.UnpauseBuffer = defaults.UnpauseCount.ToStringCached();
                                 }
                             }
+
+                            listing.Gap();
+
+                            listing.CheckboxLabeled("Forever if uncountable", ref defaults.ForeverIfUncountable);
                         }
                     }
                     listing.End();
+
+                    Widgets.EndScrollView();
 
                     foreach (var bill in selTable.billStack.Bills.OfType<Bill_Production>().Where(b => b.GetAddedFields().Linked))
                     {

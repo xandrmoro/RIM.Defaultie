@@ -19,10 +19,15 @@ namespace Defaultie
         public string CountBuffer = "";
         public string UnpauseBuffer = "";
 
+        public bool ForeverIfUncountable = true;
+
         public Pawn PawnRestriction;
         public bool SlavesOnly;
         public bool MechsOnly;
         public bool NonMechsOnly;
+        internal bool LimitToAllowedStuff;
+        public QualityRange QualityRange = QualityRange.All;
+        public FloatRange HpRange = new FloatRange(0, 1);
 
         public void ZeroAll()
         {
@@ -54,14 +59,28 @@ namespace Defaultie
             Scribe_Values.Look(ref Range, "range", Defaultie.Settings.DefaultWorktableRange);
             Scribe_Values.Look(ref RepeatCount, "repeatCount", Defaultie.Settings.DefaultRepeatCount);
             Scribe_Defs.Look(ref StoreMode, "storeMode");
+            if (StoreMode == null)
+            {
+                StoreMode = BillStoreModeDefOf.BestStockpile;
+            }
             Scribe_Defs.Look(ref RepeatMode, "repeatMode");
+            if (RepeatMode == null)
+            {
+                RepeatMode = BillRepeatModeDefOf.RepeatCount;
+            }
 
             Scribe_Values.Look(ref PauseOnComplete, "pauseOnComplete", false);
             Scribe_Values.Look(ref UnpauseCount, "unpauseCount", 0);
+            
+            Scribe_Values.Look(ref ForeverIfUncountable, "foreverIfUncountable", true);
 
             Scribe_Values.Look(ref SlavesOnly, "slavesOnly", false);
             Scribe_Values.Look(ref MechsOnly, "mechsOnly", false);
             Scribe_Values.Look(ref NonMechsOnly, "nonMechsOnly", false);
+
+            Scribe_Values.Look(ref LimitToAllowedStuff, "limitToAllowed", false);
+            Scribe_Values.Look(ref QualityRange, "qualityRange", QualityRange.All);
+            Scribe_Values.Look(ref HpRange, "hpRange", new FloatRange(0, 1));
 
             Scribe_References.Look(ref PawnRestriction, "pawnRestriction");
 
